@@ -11,7 +11,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  font_tests:
+    runs-on: ubuntu-latest
+    name: Check CJK font assets and renderer
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify shipped font coverage and checksums
+        run: python3 tools/fonts/generate_cjk.py --verify
+      - name: Test the real renderer with sanitizers
+        run: |
+          g++ -std=c++17 -g -O1 -fsanitize=address,undefined -fno-omit-frame-pointer \
+            -Itests/font_stubs -Iarm9/source/gui/font \
+            tests/font_renderer.cpp arm9/source/gui/font/nitroFont2.cpp \
+            -o /tmp/font_renderer_tests
+          /tmp/font_renderer_tests
+
   pico_launcher:
+    needs: font_tests
     runs-on: ubuntu-latest
     container: skylyrac/blocksds:slim-v1.16.0
     name: Build Pico Launcher
@@ -23,6 +39,12 @@ jobs:
       - name: Run build script
         run: |
           make
+          /opt/wonderful/toolchain/gcc-arm-none-eabi/bin/arm-none-eabi-size build/arm9.elf build/arm7.elf
+      - name: Publish linker memory map
+        uses: actions/upload-artifact@v4
+        with:
+          path: build/arm9.map
+          name: Linker_Map
       - name: Publish build to GH Actions
         uses: actions/upload-artifact@v4
         with:

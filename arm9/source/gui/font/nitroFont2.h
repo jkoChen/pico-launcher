@@ -1,6 +1,9 @@
 #pragma once
 
 #define NFT2_SIGNATURE      0x3254464E
+// Pico extension: packed 2-bit coverage (0, 5, 10, 15) for large fallback fonts.
+#define NFT2_GLYPH_2BPP     0x800000
+#define NFT2_GLYPH_OFFSET_MASK 0x7FFFFF
 
 struct nft2_glyph_t
 {
@@ -47,6 +50,10 @@ struct nft2_string_render_params_t
 /// @param font The font to prepare.
 /// @return True if preparing was successful, or false otherwise.
 bool nft2_unpack(nft2_header_t* font);
+
+/// @brief Register immutable fallback fonts after unpacking them, before drawing.
+/// Existing glyphs always take priority. Small fonts have an ascent of 8 or less.
+void nft2_setFallbackFonts(const nft2_header_t* smallFont, const nft2_header_t* regularFont);
 
 /// @brief Finds the glyph index in the given \p font that corresponds to the given \p character.
 /// @param font The font the find the glyph index in.

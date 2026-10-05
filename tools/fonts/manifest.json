@@ -1,0 +1,22 @@
+{
+  "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-han-serif/7889f11bf31170b5d092a083b357c8c8130f89e0/OTF/SimplifiedChinese/SourceHanSerifSC-Medium.otf",
+  "source_sha256": "1d4dc4b757c07034e2412d6edf48f54f94ec7172d4deb3b90a3e4fc9dcb94f5d",
+  "license": "SIL OFL 1.1",
+  "family": "PicoSerifCJK",
+  "fonts": [
+    {
+      "file": "PicoSerifCJK-9.nft2",
+      "characters": 28273,
+      "bytes": 841252,
+      "sha256": "335229169763e78b314c5b632b46832612e7d747e59386251ccc98c9600b8e67",
+      "pixel_size": 9
+    },
+    {
+      "file": "PicoSerifCJK-12.nft2",
+      "characters": 28273,
+      "bytes": 1279143,
+      "sha256": "3fbfbe709f49eb934c02e1d1bde7e916604d8e66d22ce6b1bea2c2ab7ce05744",
+      "pixel_size": 12
+    }
+  ]
+}
