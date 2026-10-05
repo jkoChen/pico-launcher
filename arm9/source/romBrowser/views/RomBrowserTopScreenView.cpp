@@ -1,4 +1,5 @@
 #include "common.h"
+#include <string.h>
 #include <libtwl/mem/memVram.h>
 #include <libtwl/gfx/gfx.h>
 #include <libtwl/gfx/gfxBackground.h>
@@ -54,7 +55,10 @@ void RomBrowserTopScreenView::Update()
             if (info)
             {
                 bool fileNameAsTitle = true;
-                const char16_t* gameTitle = info->GetGameTitle();
+                const bool useNdsFileName = _viewModel->GetRomBrowserController()
+                    ->GetRomBrowserDisplaySettings().ndsFileNameAsTitle
+                    && !strcmp(item.GetFileType()->GetShortName(), "nds");
+                const char16_t* gameTitle = useNdsFileName ? nullptr : info->GetGameTitle();
                 if (gameTitle)
                 {
                     _fileInfoView->SetGameTitleAsync(_viewModel->GetBgTaskQueue(), gameTitle);

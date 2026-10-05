@@ -1,4 +1,6 @@
 # Pico Launcher
+This fork adds a switchable NDS filename title setting to upstream **v1.3.0**. It is a modified build, not an official LNH team release. See [Usage](docs/Usage.md) for the Game/File setting.
+
 This repository contains Pico Launcher, which is a front-end for [Pico Loader](https://github.com/LNH-team/pico-loader).
 
 ![Horizontal display mode with custom theme](docs/images/HorizontalCustom.png)

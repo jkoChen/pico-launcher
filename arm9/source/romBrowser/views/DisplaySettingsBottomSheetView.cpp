@@ -30,6 +30,9 @@
 #define SORTING_LABEL_X     20
 #define SORTING_LABEL_Y     78
 
+#define NDS_TITLE_LABEL_X   20
+#define NDS_TITLE_LABEL_Y   110
+
 #define FILTERS_LABEL_X     20
 #define FILTERS_LABEL_Y     112
 
@@ -55,6 +58,7 @@ DisplaySettingsBottomSheetView::DisplaySettingsBottomSheetView(
     , _titleLabel(Label2DView::CreateShared(128, 16, 25, fontRepository->GetFont(FontType::Medium11)))
     , _layoutLabel(Label2DView::CreateShared(64, 16, 25, fontRepository->GetFont(FontType::Regular10)))
     , _sortingLabel(Label2DView::CreateShared(64, 16, 25, fontRepository->GetFont(FontType::Regular10)))
+    , _ndsTitleLabel(Label2DView::CreateShared(48, 16, 10, fontRepository->GetFont(FontType::Regular10)))
     , _materialColorScheme(materialColorScheme)
     // , _filtersLabel(64, 16, 25, fontRepository->GetFont(FontType::Regular10))
 {
@@ -64,6 +68,8 @@ DisplaySettingsBottomSheetView::DisplaySettingsBottomSheetView(
     AddChildTail(_layoutLabel.GetPointer());
     _sortingLabel->SetText(u"Sorting");
     AddChildTail(_sortingLabel.GetPointer());
+    _ndsTitleLabel->SetText(u"NDS");
+    AddChildTail(_ndsTitleLabel.GetPointer());
     // _filtersLabel.SetText(u"Filters");
     // AddChildTail(&_filtersLabel);
 
@@ -77,6 +83,16 @@ DisplaySettingsBottomSheetView::DisplaySettingsBottomSheetView(
     {
         sortOption = CreateSortOptionIconButton();
         AddChildTail(sortOption.GetPointer());
+    }
+
+    for (u32 i = 0; i < _ndsTitleOptions.size(); i++)
+    {
+        _ndsTitleOptions[i] = CreateNdsTitleOptionIconButton();
+        AddChildTail(_ndsTitleOptions[i].GetPointer());
+        _ndsTitleOptionLabels[i] = Label2DView::CreateShared(
+            48, 16, 10, fontRepository->GetFont(FontType::Regular10));
+        _ndsTitleOptionLabels[i]->SetText(i == 0 ? u"Game" : u"File");
+        AddChildTail(_ndsTitleOptionLabels[i].GetPointer());
     }
 
     // for (auto& filterOption : _filterOptions)
@@ -134,6 +150,21 @@ SharedPtr<IconButton2DView> DisplaySettingsBottomSheetView::CreateSortOptionIcon
     return sortOption;
 }
 
+SharedPtr<IconButton2DView> DisplaySettingsBottomSheetView::CreateNdsTitleOptionIconButton()
+{
+    auto titleOption = IconButton2DView::CreateShared(
+        IconButtonView::Type::Tonal,
+        IconButtonView::State::ToggleUnselected,
+        md::sys::color::surfaceContainerLow,
+        _materialColorScheme);
+    titleOption->SetAction([] (IconButtonView* sender, void* arg)
+    {
+        auto self = static_cast<DisplaySettingsBottomSheetView*>(arg);
+        self->_viewModel->SetNdsFileNameAsTitle(sender == self->_ndsTitleOptions[1].GetPointer());
+    }, this);
+    return titleOption;
+}
+
 // IconButtonView DisplaySettingsBottomSheetView::CreateFilterOptionIconButton()
 // {
 //     IconButtonView filterOption
@@ -162,6 +193,8 @@ void DisplaySettingsBottomSheetView::InitVram(const VramContext& vramContext)
         // sort options
         _sortOptions[0]->SetIconVramOffset(LoadIcon(*objVramManager, sortNameAscendingIconTiles, sortNameAscendingIconTilesLen));
         _sortOptions[1]->SetIconVramOffset(LoadIcon(*objVramManager, sortNameDescendingIconTiles, sortNameDescendingIconTilesLen));
+        _ndsTitleOptions[0]->SetIconVramOffset(LoadIcon(*objVramManager, gamesIconTiles, gamesIconTilesLen));
+        _ndsTitleOptions[1]->SetIconVramOffset(LoadIcon(*objVramManager, listIconTiles, listIconTilesLen));
         // _sortOptions[2].SetIconVramOffset(LoadIcon(objVramManager, recentIconTiles, recentIconTilesLen));
 
         // filter options
@@ -178,6 +211,11 @@ void DisplaySettingsBottomSheetView::UpdateLabels()
     _titleLabel->SetPosition(TITLE_LABEL_X, _position.y + TITLE_LABEL_Y);
     _layoutLabel->SetPosition(LAYOUT_LABEL_X, _position.y + LAYOUT_LABEL_Y);
     _sortingLabel->SetPosition(SORTING_LABEL_X, _position.y + SORTING_LABEL_Y);
+    _ndsTitleLabel->SetPosition(NDS_TITLE_LABEL_X, _position.y + NDS_TITLE_LABEL_Y);
+    for (u32 i = 0; i < _ndsTitleOptionLabels.size(); i++)
+    {
+        _ndsTitleOptionLabels[i]->SetPosition(102 + 82 * i, _position.y + NDS_TITLE_LABEL_Y);
+    }
     // _filtersLabel.SetPosition(FILTERS_LABEL_X, _position.y + FILTERS_LABEL_Y);
 }
 
@@ -209,6 +247,13 @@ void DisplaySettingsBottomSheetView::Update()
         x += 32;
         idx++;
     }
+    for (u32 i = 0; i < _ndsTitleOptions.size(); i++)
+    {
+        _ndsTitleOptions[i]->SetPosition(70 + 82 * i, _position.y + 102);
+        _ndsTitleOptions[i]->SetState(_viewModel->GetNdsFileNameAsTitle() == (i == 1)
+            ? IconButtonView::State::ToggleSelected
+            : IconButtonView::State::ToggleUnselected);
+    }
     // x = 70;
     // for (auto& filterOption : _filterOptions)
     // {
@@ -228,6 +273,13 @@ void DisplaySettingsBottomSheetView::Draw(GraphicsContext& graphicsContext)
         _layoutLabel->SetForegroundColor(_materialColorScheme->onSurfaceVariant);
         _sortingLabel->SetBackgroundColor(_materialColorScheme->GetColor(md::sys::color::surfaceContainerLow));
         _sortingLabel->SetForegroundColor(_materialColorScheme->onSurfaceVariant);
+        _ndsTitleLabel->SetBackgroundColor(_materialColorScheme->GetColor(md::sys::color::surfaceContainerLow));
+        _ndsTitleLabel->SetForegroundColor(_materialColorScheme->onSurfaceVariant);
+        for (auto& label : _ndsTitleOptionLabels)
+        {
+            label->SetBackgroundColor(_materialColorScheme->GetColor(md::sys::color::surfaceContainerLow));
+            label->SetForegroundColor(_materialColorScheme->onSurface);
+        }
         // _filtersLabel.SetBackgroundColor(_materialColorScheme->GetColor(md::sys::color::surfaceContainerLow));
         // _filtersLabel.SetForegroundColor(_materialColorScheme->onSurfaceVariant);
         BottomSheetView::Draw(graphicsContext);
@@ -299,11 +351,15 @@ SharedPtr<View> DisplaySettingsBottomSheetView::MoveFocus(const SharedPtr<View>&
                     idx = 0;
                 return _sortOptions[idx];
             }
-            else //if (direction == FocusMoveDirection::Up)
+            else if (direction == FocusMoveDirection::Up)
             {
                 if (idx >= (int)_layoutOptions.size())
                     idx = _layoutOptions.size() - 1;
                 return _layoutOptions[idx];
+            }
+            else if (direction == FocusMoveDirection::Down)
+            {
+                return _ndsTitleOptions[idx];
             }
             // else //if (direction == FocusMoveDirection::Down)
             // {
@@ -311,6 +367,20 @@ SharedPtr<View> DisplaySettingsBottomSheetView::MoveFocus(const SharedPtr<View>&
             //         idx = _filterOptions.size() - 1;
             //     return &_filterOptions[idx];
             // }
+        }
+        idx++;
+    }
+    idx = 0;
+    for (auto& titleOption : _ndsTitleOptions)
+    {
+        if (currentFocus.GetPointer() == titleOption.GetPointer())
+        {
+            if (direction == FocusMoveDirection::Left || direction == FocusMoveDirection::Right)
+                return _ndsTitleOptions[1 - idx];
+            if (direction == FocusMoveDirection::Up)
+                return _sortOptions[idx];
+            if (direction == FocusMoveDirection::Down)
+                return _layoutOptions[idx];
         }
         idx++;
     }
@@ -359,6 +429,10 @@ void DisplaySettingsBottomSheetView::SetGraphics(
     for (auto& sortOption : _sortOptions)
     {
         sortOption->SetGraphics(iconButtonVramToken);
+    }
+    for (auto& titleOption : _ndsTitleOptions)
+    {
+        titleOption->SetGraphics(iconButtonVramToken);
     }
     // for (auto& filterOption : _filterOptions)
     //     filterOption.SetGraphics(iconButtonVramToken);

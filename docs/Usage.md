@@ -23,7 +23,7 @@ The settings menu can be accessed by using the DPAD to move the selector to the 
 
 ![Settings menu](./images/SettingsPage.png)
 
-Currently, the only settings available are the display mode, and the sorting mode (More settings are available [in the settings file](#settings)). Here is how each layout looks like.
+The display settings include the layout, sorting mode, and NDS title source (more settings are available [in the settings file](#settings)). In the **NDS** row, select the **Game** icon to use the game's internal title (default), or the **File** icon to use its filename, including the extension. Use the DPAD and A, or tap the corresponding icon. This changes the banner list and top-screen title for NDS files (`.nds`, `.srl`, and `.dsi`) in every layout. Game icons and covers remain available. Press B to close the settings and save your choice for the next launch. Here is how each layout looks like.
 
 <table>
     <tr>
@@ -45,6 +45,7 @@ Settings are stored on your SD card in `/_pico/settings.json`. They can be edite
 - `language` - Display language for Pico Launcher. Currently, only `english` is supported. Other languages may be supported later.
 - `romBrowserLayout` - Specified how folder contents are displayed. This setting can be changed in Pico Launcher directly.
 - `romBrowserSortMode` - Specified if folder contents should be sorted from A to Z (`NameAscending`), or from Z to A (`NameDescending`). This setting can be changed from within Pico Launcher.
+- `ndsFileNameAsTitle` - Set to `true` to use NDS filenames as titles, or `false` to use internal game titles (default). This setting can be changed in the NDS row of Display Settings. Long filenames use the existing ellipsis behavior; the separate top-screen filename line still scrolls.
 - `theme`: Specifies the folder name of the theme to use. If the theme cannot be found, a default fallback theme will be used.
 - `lastUsedFilePath` - Specifies the path of the most recently launched homebrew or game, such that it can be selected the next time Pico Launcher is started. It is automatically updated by Pico Launcher.
 - `fileAssociations` - See [FileAssociations.md](/docs/FileAssociations.md) for information about how to use this setting.

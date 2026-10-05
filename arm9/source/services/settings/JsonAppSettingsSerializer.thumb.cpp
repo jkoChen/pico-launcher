@@ -12,6 +12,7 @@
 #define KEY_LANGUAGE                 "language"
 #define KEY_ROM_BROWSER_LAYOUT       "romBrowserLayout"
 #define KEY_ROM_BROWSER_SORT_MODE    "romBrowserSortMode"
+#define KEY_NDS_FILE_NAME_AS_TITLE    "ndsFileNameAsTitle"
 #define KEY_THEME                    "theme"
 #define KEY_LAST_USED_FILE_PATH      "lastUsedFilePath"
 #define KEY_FILE_ASSOCIATIONS        "fileAssociations"
@@ -127,6 +128,7 @@ static std::unique_ptr<u8[]> writeJson(const AppSettings* appSettings, u32& leng
     json[KEY_LANGUAGE] = appSettings->language.GetString();
     json[KEY_ROM_BROWSER_LAYOUT] = serializeRomBrowserLayout(appSettings->romBrowserDisplaySettings.layout);
     json[KEY_ROM_BROWSER_SORT_MODE] = serializeRomBrowserSortMode(appSettings->romBrowserDisplaySettings.sortMode);
+    json[KEY_NDS_FILE_NAME_AS_TITLE] = appSettings->romBrowserDisplaySettings.ndsFileNameAsTitle;
     json[KEY_THEME] = appSettings->theme.GetString();
     json[KEY_LAST_USED_FILE_PATH] = appSettings->lastUsedFilePath.GetString();
     serializeFileAssociations(json, appSettings);
@@ -167,6 +169,8 @@ static void readJson(AppSettings* appSettings, const JsonDocument& json)
     appSettings->language = json[KEY_LANGUAGE] | appSettings->language.GetString();
     appSettings->theme = json[KEY_THEME] | appSettings->theme.GetString();
     appSettings->lastUsedFilePath = json[KEY_LAST_USED_FILE_PATH] | appSettings->lastUsedFilePath.GetString();
+    appSettings->romBrowserDisplaySettings.ndsFileNameAsTitle =
+        json[KEY_NDS_FILE_NAME_AS_TITLE] | appSettings->romBrowserDisplaySettings.ndsFileNameAsTitle;
 
     RomBrowserLayout romBrowserLayout;
     if (tryParseRomBrowserLayout(json[KEY_ROM_BROWSER_LAYOUT].as<const char*>(),

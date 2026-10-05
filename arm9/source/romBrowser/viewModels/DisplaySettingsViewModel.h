@@ -38,6 +38,20 @@ public:
         }
     }
 
+    constexpr bool GetNdsFileNameAsTitle() const
+    {
+        return _romBrowserDisplaySettings.ndsFileNameAsTitle;
+    }
+
+    void SetNdsFileNameAsTitle(bool ndsFileNameAsTitle)
+    {
+        if (_romBrowserDisplaySettings.ndsFileNameAsTitle != ndsFileNameAsTitle)
+        {
+            _romBrowserDisplaySettings.ndsFileNameAsTitle = ndsFileNameAsTitle;
+            _romBrowserController->SetRomBrowserDisplaySettings(_romBrowserDisplaySettings);
+        }
+    }
+
     void Close()
     {
         _romBrowserController->HideDisplaySettings();

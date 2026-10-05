@@ -1,5 +1,7 @@
 #include "common.h"
+#include <string.h>
 #include "../FileInfoManager.h"
+#include "../IRomBrowserController.h"
 #include "core/task/TaskQueue.h"
 #include "../views/BannerListItemView.h"
 #include "../Theme/IRomBrowserViewFactory.h"
@@ -32,7 +34,9 @@ TaskResult<void> BannerListFileRecyclerAdapter::BindView(SharedPtr<View> view, i
     listItemView->GetViewModel().SetIndex(index);
     const auto& fileInfo = _fileInfoManager->GetItem(index);
     bool fileNameAsTitle = true;
-    if (internalFileInfo)
+    const bool useNdsFileName = _romBrowserController->GetRomBrowserDisplaySettings().ndsFileNameAsTitle
+        && !strcmp(fileInfo.GetFileType()->GetShortName(), "nds");
+    if (internalFileInfo && !useNdsFileName)
     {
         const char16_t* gameTitle = internalFileInfo->GetGameTitle();
         if (gameTitle)
