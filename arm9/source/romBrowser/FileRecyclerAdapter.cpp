@@ -26,13 +26,18 @@ void FileRecyclerAdapter::BindView(SharedPtr<View> view, int index) const
 
         LOG_DEBUG("Started task to load %d\n", index);
         _fileInfoManager->LoadFileInfo(index);
-        auto internalFileInfo = _fileInfoManager->GetInternalFileInfo(index);
         if (cancelRequested)
         {
             _fileInfoManager->ReleaseFileInfo(index);
             return TaskResult<void>::Canceled();
         }
-        return BindView(view, index, internalFileInfo, cancelRequested);
+        return TaskResult<void>::Completed();
     });
-    viewModel.SetQueueTask(std::move(queueTask));
+    viewModel.SetQueueTask(std::move(queueTask), [=, this]
+    {
+        // Publish the title and icon together on the UI thread, after IO has
+        // completed. ReleaseView discards this callback before row reuse.
+        const vu8 cancelRequested = false;
+        BindView(view, index, _fileInfoManager->GetInternalFileInfo(index), cancelRequested);
+    });
 }

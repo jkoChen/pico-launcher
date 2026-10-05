@@ -158,10 +158,10 @@ void TestRowReuse()
         BannerListFileRecyclerAdapter adapter(&controller, &files, &queue, nullptr, &factory, nullptr);
         auto row = SharedPtr<BannerListItemView>(adapter.CreateView());
         Gate gate;
-        row->beforeFileNameWrite = [&] { gate.Pause(); };
+        files.beforeLoadFinish = [&] { gate.Pause(); };
         adapter.BindView(row, 0);
         queue.StartThread(1, nullptr, 0);
-        gate.WaitEntered(); // Old callback is paused just before writing the filename.
+        gate.WaitEntered(); // IO still owns the metadata that ReleaseView will free.
         beforeTaskWait = [&] { gate.Release(); };
         adapter.ReleaseView(row, 0);
         gate.Release(); // Also lets the unfixed non-waiting baseline complete/fail.
@@ -170,9 +170,10 @@ void TestRowReuse()
         CHECK(row->text.empty());
         CHECK(!row->icon);
 
-        row->beforeFileNameWrite = nullptr;
+        files.beforeLoadFinish = nullptr;
         adapter.BindView(row, 1);
         WaitIdle(queue);
+        row->GetViewModel().DisposeQueueTaskWhenComplete();
         CHECK(row->text == files.GetItem(1).GetFileName());
         CHECK(row->icon && row->icon->file == 1);
         row->GetViewModel().Activate();
@@ -182,6 +183,39 @@ void TestRowReuse()
         adapter.ReleaseView(row, 1);
         queue.StopThread();
     }
+}
+
+void TestRowPublication()
+{
+    TestQueue queue;
+    FileInfoManager files;
+    IRomBrowserController controller(&files);
+    IRomBrowserViewFactory factory;
+    BannerListFileRecyclerAdapter adapter(&controller, &files, &queue, nullptr, &factory, nullptr);
+    auto row = SharedPtr<BannerListItemView>(adapter.CreateView());
+    adapter.BindView(row, 0);
+    queue.StartThread(1, nullptr, 0);
+    WaitIdle(queue);
+    CHECK(row->text.empty() && !row->icon); // IO must not mutate live UI objects.
+    auto uiThread = std::this_thread::get_id();
+    row->beforeFileNameWrite = [=] { CHECK(std::this_thread::get_id() == uiThread); };
+    row->GetViewModel().DisposeQueueTaskWhenComplete();
+    CHECK(row->text == files.GetItem(0).GetFileName());
+    CHECK(row->icon && row->icon->file == 0);
+    adapter.ReleaseView(row, 0);
+
+    // A completed load discarded before the next frame must never publish its
+    // old filename into the row, including when it is immediately rebound.
+    adapter.BindView(row, 0);
+    WaitIdle(queue);
+    adapter.ReleaseView(row, 0);
+    adapter.BindView(row, 1);
+    WaitIdle(queue);
+    row->GetViewModel().DisposeQueueTaskWhenComplete();
+    CHECK(row->text == files.GetItem(1).GetFileName());
+    CHECK(row->icon && row->icon->file == 1);
+    adapter.ReleaseView(row, 1);
+    queue.StopThread();
 }
 
 void TestImmediateIdentity()
@@ -207,6 +241,7 @@ int main(int argc, char** argv)
     else if (name == "pending-queue") TestPendingQueue();
     else if (name == "completion-ownership") TestCompletionOwnership();
     else if (name == "row-reuse") TestRowReuse();
+    else if (name == "row-publication") TestRowPublication();
     else if (name == "immediate-identity") TestImmediateIdentity();
     else CHECK(false);
     std::printf("PASS: %s\n", argv[1]);

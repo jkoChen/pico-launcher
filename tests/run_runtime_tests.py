@@ -30,7 +30,7 @@ STUB_HEADERS = [
     'romBrowser/views/BannerListItemView.h', 'romBrowser/Theme/IRomBrowserViewFactory.h',
     'romBrowser/viewModels/RomBrowserViewModel.h', 'romBrowser/FileType/Nds/NdsFileType.h',
 ]
-CASES = ['weak-reset', 'pending-queue', 'completion-ownership', 'row-reuse', 'immediate-identity']
+CASES = ['weak-reset', 'pending-queue', 'completion-ownership', 'row-publication', 'immediate-identity']
 
 
 def build(destination, baseline=False):
@@ -88,5 +88,5 @@ with tempfile.TemporaryDirectory(prefix='pico-runtime-') as directory:
     for case in CASES:
         run(baseline, case, baseline=True)
     fixed = build(directory / 'fixed')
-    for case in CASES:
+    for case in CASES + ['row-reuse']:
         run(fixed, case)

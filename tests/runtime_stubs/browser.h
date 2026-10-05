@@ -55,9 +55,15 @@ class FileInfoManager
     std::array<FileInfo, 2> _items { FileInfo("逆转裁判4.nds"), FileInfo("节奏天国.nds") };
     std::array<std::unique_ptr<InternalFileInfo>, 2> _info;
 public:
+    std::function<void()> beforeLoadFinish;
     u32 GetItemCount() const { return _items.size(); }
     const FileInfo& GetItem(int index) const { return _items.at(index); }
-    void LoadFileInfo(int index) { _info.at(index) = std::make_unique<InternalFileInfo>(index); }
+    void LoadFileInfo(int index)
+    {
+        _info.at(index) = std::make_unique<InternalFileInfo>(index);
+        if (beforeLoadFinish)
+            beforeLoadFinish();
+    }
     const InternalFileInfo* GetInternalFileInfo(int index) const { return _info.at(index).get(); }
     void ReleaseFileInfo(int index) { _info.at(index).reset(); }
 };
