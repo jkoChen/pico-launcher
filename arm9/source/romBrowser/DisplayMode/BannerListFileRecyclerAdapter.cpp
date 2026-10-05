@@ -31,7 +31,6 @@ TaskResult<void> BannerListFileRecyclerAdapter::BindView(SharedPtr<View> view, i
     const InternalFileInfo* internalFileInfo, const vu8& cancelRequested) const
 {
     auto listItemView = static_cast<BannerListItemView*>(view.GetPointer());
-    listItemView->GetViewModel().SetIndex(index);
     const auto& fileInfo = _fileInfoManager->GetItem(index);
     bool fileNameAsTitle = true;
     const bool useNdsFileName = _romBrowserController->GetRomBrowserDisplaySettings().ndsFileNameAsTitle
@@ -72,20 +71,20 @@ TaskResult<void> BannerListFileRecyclerAdapter::BindView(SharedPtr<View> view, i
     return TaskResult<void>::Completed();
 }
 
-void BannerListFileRecyclerAdapter::SetQueueTask(const SharedPtr<View>& view, QueueTask<void> queueTask) const
+RomBrowserItemViewModel& BannerListFileRecyclerAdapter::GetItemViewModel(const SharedPtr<View>& view) const
 {
     auto listItemView = static_cast<BannerListItemView*>(view.GetPointer());
-    listItemView->GetViewModel().SetQueueTask(std::move(queueTask));
+    return listItemView->GetViewModel();
 }
 
 void BannerListFileRecyclerAdapter::ReleaseView(SharedPtr<View> view, int index) const
 {
     LOG_DEBUG("Releasing %d\n", index);
     auto listItemView = static_cast<BannerListItemView*>(view.GetPointer());
+    listItemView->GetViewModel().CancelQueueTask();
     listItemView->SetIcon(nullptr);
     listItemView->SetGameTitle(u"");
     listItemView->GetViewModel().SetIndex(-1);
-    listItemView->GetViewModel().CancelQueueTask();
     _fileInfoManager->ReleaseFileInfo(index);
 }
 

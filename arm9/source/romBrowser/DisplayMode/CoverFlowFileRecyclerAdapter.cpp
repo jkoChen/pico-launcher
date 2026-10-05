@@ -23,7 +23,6 @@ TaskResult<void> CoverFlowFileRecyclerAdapter::BindView(SharedPtr<View> view, in
     const InternalFileInfo* internalFileInfo, const vu8& cancelRequested) const
 {
     auto coverView = static_cast<CoverView*>(view.GetPointer());
-    coverView->GetViewModel().SetIndex(index);
     auto cover = _fileInfoManager->GetFileCover(index);
     if (cancelRequested)
     {
@@ -41,19 +40,19 @@ TaskResult<void> CoverFlowFileRecyclerAdapter::BindView(SharedPtr<View> view, in
     return TaskResult<void>::Completed();
 }
 
-void CoverFlowFileRecyclerAdapter::SetQueueTask(const SharedPtr<View>& view, QueueTask<void> queueTask) const
+RomBrowserItemViewModel& CoverFlowFileRecyclerAdapter::GetItemViewModel(const SharedPtr<View>& view) const
 {
     auto coverView = static_cast<CoverView*>(view.GetPointer());
-    coverView->GetViewModel().SetQueueTask(std::move(queueTask));
+    return coverView->GetViewModel();
 }
 
 void CoverFlowFileRecyclerAdapter::ReleaseView(SharedPtr<View> view, int index) const
 {
     LOG_DEBUG("Releasing %d\n", index);
     auto coverView = static_cast<CoverView*>(view.GetPointer());
+    coverView->GetViewModel().CancelQueueTask();
     coverView->ClearCover();
     coverView->GetViewModel().SetIndex(-1);
-    coverView->GetViewModel().CancelQueueTask();
     _fileInfoManager->ReleaseFileInfo(index);
 }
 

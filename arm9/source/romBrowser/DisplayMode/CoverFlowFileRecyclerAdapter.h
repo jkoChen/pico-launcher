@@ -31,5 +31,5 @@ private:
 
     TaskResult<void> BindView(SharedPtr<View> view, int index,
         const InternalFileInfo* internalFileInfo, const vu8& cancelRequested) const override;
-    void SetQueueTask(const SharedPtr<View>& view, QueueTask<void> queueTask) const override;
+    RomBrowserItemViewModel& GetItemViewModel(const SharedPtr<View>& view) const override;
 };

@@ -32,6 +32,18 @@ public:
         }
     }
 
+    // Use before reusing or destroying data that the callback can still access.
+    // The caller must not be the worker executing this task or hold its locks.
+    void CancelTaskAndWait()
+    {
+        if (_task)
+        {
+            _task->RequestCancel();
+            _task->Wait();
+            Dispose();
+        }
+    }
+
     constexpr bool IsValid() const { return _task != nullptr; }
 
 protected:
@@ -99,6 +111,7 @@ public:
 protected:
     rtos_event_t _event;
     LinkedList<TaskBase, &TaskBase::link> _taskList;
+    TaskBase* _executingTask = nullptr;
     volatile bool _endThreadWhenDone = false;
     volatile bool _idle = true;
 
@@ -128,13 +141,18 @@ public:
     void ReturnOwnership(TaskBase* task) override
     {
         u32 irqs = rtos_disableIrqs();
-        if (task->IsCompleted())
+        if (task->IsCompleted() && task != _executingTask)
         {
-            if (task->link.prev != nullptr || task->link.next != nullptr)
+            // A single pending task has neither a previous nor a next link.
+            if (_taskList.GetHead() == task || task->link.prev != nullptr || task->link.next != nullptr)
             {
                 _taskList.Remove(task);
             }
+            // Captured views may free memory or take locks in their destructors.
+            // Keep the pool slot reserved, but let the scheduler run while destroying them.
+            rtos_restoreIrqs(irqs);
             task->~TaskBase();
+            irqs = rtos_disableIrqs();
             u32 slot = ((u32)task - (u32)_taskPool) / ((MaxTaskSize + 3) & ~3);
             _poolOccupation.Set(slot, 0);
         }

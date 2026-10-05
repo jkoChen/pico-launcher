@@ -8,6 +8,7 @@ class InternalFileInfo;
 class IThemeFileIconFactory;
 class VramContext;
 class IRomBrowserController;
+class RomBrowserItemViewModel;
 
 class FileRecyclerAdapter : public RecyclerAdapter
 {
@@ -36,5 +37,5 @@ protected:
 
     virtual TaskResult<void> BindView(SharedPtr<View> view, int index,
         const InternalFileInfo* internalFileInfo, const vu8& cancelRequested) const = 0;
-    virtual void SetQueueTask(const SharedPtr<View>& view, QueueTask<void> queueTask) const = 0;
+    virtual RomBrowserItemViewModel& GetItemViewModel(const SharedPtr<View>& view) const = 0;
 };

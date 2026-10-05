@@ -2,6 +2,7 @@
 #include "core/task/TaskQueue.h"
 #include "FileInfoManager.h"
 #include "FileRecyclerAdapter.h"
+#include "viewModels/RomBrowserItemViewModel.h"
 
 u32 FileRecyclerAdapter::GetItemCount() const
 {
@@ -11,6 +12,10 @@ u32 FileRecyclerAdapter::GetItemCount() const
 void FileRecyclerAdapter::BindView(SharedPtr<View> view, int index) const
 {
     LOG_DEBUG("Binding %d\n", index);
+    auto& viewModel = GetItemViewModel(view);
+    viewModel.CancelQueueTask();
+    // Input must target this row's new file even while its icon is still loading.
+    viewModel.SetIndex(index);
     auto queueTask = _taskQueue->Enqueue([=, this] (const vu8& cancelRequested)
     {
         if (cancelRequested)
@@ -29,5 +34,5 @@ void FileRecyclerAdapter::BindView(SharedPtr<View> view, int index) const
         }
         return BindView(view, index, internalFileInfo, cancelRequested);
     });
-    SetQueueTask(view, std::move(queueTask));
+    viewModel.SetQueueTask(std::move(queueTask));
 }

@@ -107,9 +107,12 @@ void LabelView::UpdateTileBuffer()
 
 QueueTask<void> LabelView::UpdateTileBufferAsync(TaskQueueBase* taskQueue)
 {
-    return taskQueue->Enqueue([this] (const vu8& canceled)
+    // Screen changes may release the owner before this queued render runs.
+    return taskQueue->Enqueue([label = SharedPtr<LabelView>(SharedFromThis())] (const vu8& canceled)
     {
-        UpdateTileBuffer();
+        if (canceled)
+            return TaskResult<void>::Canceled();
+        label->UpdateTileBuffer();
         return TaskResult<void>::Completed();
     });
 }

@@ -27,7 +27,7 @@ jobs:
           /tmp/font_renderer_tests
 
   pico_launcher:
-    needs: font_tests
+    needs: [font_tests, runtime_tests]
     runs-on: ubuntu-latest
     container: skylyrac/blocksds:slim-v1.16.0
     name: Build Pico Launcher
@@ -52,3 +52,15 @@ jobs:
             _pico/
             LAUNCHER.nds
           name: Pico_Launcher
+
+  runtime_tests:
+    runs-on: ubuntu-latest
+    name: Check settings teardown and recycled rows
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install 32-bit host test compiler
+        run: sudo apt-get update && sudo apt-get install -y g++-multilib
+      - name: Reproduce old failures and test fixed runtime with sanitizers
+        run: python3 tests/run_runtime_tests.py

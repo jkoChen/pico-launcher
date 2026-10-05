@@ -24,12 +24,13 @@ public:
 
     void CancelQueueTask()
     {
-        _queueTask.CancelTask();
+        // ReleaseView must finish the old callback before clearing/reusing the row.
+        _queueTask.CancelTaskAndWait();
     }
 
     void DisposeQueueTaskWhenComplete()
     {
-        if (_queueTask.GetTask().IsCompleted())
+        if (_queueTask.IsValid() && _queueTask.GetTask().IsCompleted())
         {
             _queueTask.Dispose();
         }
