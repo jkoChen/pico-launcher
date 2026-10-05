@@ -1,0 +1,16 @@
+PicoPixelCJK is a modified bitmap font derived from Fusion Pixel Font
+(2026.09.25), Copyright (c) 2022 TakWolf.
+
+Source: https://github.com/TakWolf/fusion-pixel-font
+Pinned source commit: 6c88c8ec0f16f05e06663890a043ecbc81d448ae
+
+Changes: BMP CJK and punctuation subset of the native 10px and 12px
+monospaced zh_hans variants, converted to Pico Launcher NFT2 format.
+Glyph outlines retain their original native pixel grid without resampling.
+Source archive and font hashes are recorded in tools/fonts/manifest.json
+in the launcher source repository.
+
+The derived fonts are distributed under SIL Open Font License 1.1.
+See OFL.txt for the full license. The LICENSES directory preserves all
+upstream notices supplied in the two source font archives, including
+Ark Pixel, BoutiqueBitmap9x9, Cubic 11, and Galmuri.

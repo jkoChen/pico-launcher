@@ -169,7 +169,7 @@ static int advance(const Font& base, char16_t c)
 int main()
 {
     const std::string root = "arm9/data/";
-    Font small(root + "PicoSerifCJK-9.nft2"), regular(root + "PicoSerifCJK-12.nft2");
+    Font small(root + "PicoPixelCJK-10.nft2"), regular(root + "PicoPixelCJK-12.nft2");
     int cases = 0;
     for (const auto& name : {"Regular-10", "Medium-10", "Medium-11", "Medium-7_5"})
     {

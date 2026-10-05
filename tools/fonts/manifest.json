@@ -1,21 +1,38 @@
 {
-  "source_url": "https://raw.githubusercontent.com/adobe-fonts/source-han-serif/7889f11bf31170b5d092a083b357c8c8130f89e0/OTF/SimplifiedChinese/SourceHanSerifSC-Medium.otf",
-  "source_sha256": "1d4dc4b757c07034e2412d6edf48f54f94ec7172d4deb3b90a3e4fc9dcb94f5d",
+  "source_project": "https://github.com/TakWolf/fusion-pixel-font",
+  "source_version": "2026.09.25",
+  "source_commit": "6c88c8ec0f16f05e06663890a043ecbc81d448ae",
+  "sources": {
+    "10": {
+      "archive_sha256": "84da5d4d6f14c49ffbba57a84669f208021a83f4ddcb4b74afa6d92bf1982154",
+      "font_sha256": "7232787a01a29aa9b5b199be5a7f362f86311885153287101d77e198ca0bcded",
+      "archive": "fusion-pixel-font-10px-monospaced-ttf.woff2-v2026.09.25.zip",
+      "file": "fusion-pixel-10px-monospaced-zh_hans.ttf.woff2",
+      "url": "https://github.com/TakWolf/fusion-pixel-font/releases/download/2026.09.25/fusion-pixel-font-10px-monospaced-ttf.woff2-v2026.09.25.zip"
+    },
+    "12": {
+      "archive_sha256": "b547511d4e8828e9e04ee4af3519c08221fee3be8467842acb6ed76623b5d624",
+      "font_sha256": "6573eb37436b61997f1012b8a8af633f40979edc2ec9c76bcdb42fa23132c428",
+      "archive": "fusion-pixel-font-12px-monospaced-ttf.woff2-v2026.09.25.zip",
+      "file": "fusion-pixel-12px-monospaced-zh_hans.ttf.woff2",
+      "url": "https://github.com/TakWolf/fusion-pixel-font/releases/download/2026.09.25/fusion-pixel-font-12px-monospaced-ttf.woff2-v2026.09.25.zip"
+    }
+  },
   "license": "SIL OFL 1.1",
-  "family": "PicoSerifCJK",
+  "family": "PicoPixelCJK",
   "fonts": [
     {
-      "file": "PicoSerifCJK-9.nft2",
-      "characters": 28273,
-      "bytes": 841252,
-      "sha256": "335229169763e78b314c5b632b46832612e7d747e59386251ccc98c9600b8e67",
-      "pixel_size": 9
+      "file": "PicoPixelCJK-10.nft2",
+      "characters": 11312,
+      "bytes": 446958,
+      "sha256": "b662e3c7e1f0259ed743b3c474380ffbc443c98b579b00212331471c002fb4e9",
+      "pixel_size": 10
     },
     {
-      "file": "PicoSerifCJK-12.nft2",
-      "characters": 28273,
-      "bytes": 1279143,
-      "sha256": "3fbfbe709f49eb934c02e1d1bde7e916604d8e66d22ce6b1bea2c2ab7ce05744",
+      "file": "PicoPixelCJK-12.nft2",
+      "characters": 21402,
+      "bytes": 928524,
+      "sha256": "7e33f8a9060cbb785899267e57445cfd35428aabcabe5c7256b4b43503b00017",
       "pixel_size": 12
     }
   ]

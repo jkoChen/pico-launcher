@@ -1,5 +1,5 @@
 # Pico Launcher
-This fork adds a switchable NDS filename title setting and Chinese font support to upstream **v1.3.0**. It is a modified build, not an official LNH team release. See [Usage](docs/Usage.md) for the Game/File setting and [Chinese fonts](docs/ChineseFonts.md) for coverage and attribution.
+This fork adds a switchable NDS filename title setting and Chinese pixel font support to upstream **v1.3.0**. It is a modified build, not an official LNH team release. See [Usage](docs/Usage.md) for the Game/File setting and [Chinese fonts](docs/ChineseFonts.md) for coverage and attribution.
 
 This repository contains Pico Launcher, which is a front-end for [Pico Loader](https://github.com/LNH-team/pico-loader).
 
